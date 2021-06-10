@@ -158,17 +158,20 @@ df_1962_and_2007 = gapminder_clean %>%
   filter(Year %in% c('2007', '1962')) %>%
   select(`Country Name`, Year, `Life expectancy at birth, total (years)`) %>%
   na.omit() %>%
-  spread(Year,`Life expectancy at birth, total (years)`) %>%
-  mutate(Difference = df_1962_and_2007$`2007` - df_1962_and_2007$`1962`) %>%
-  arrange(desc(Difference)) %>%
-  select(`Country Name`, Difference)
+  spread(Year,`Life expectancy at birth, total (years)`)
 
+df_1962_and_2007 = df_1962_and_2007 %>%
+  mutate(`Change in life expectancy at birth, total (years)` = df_1962_and_2007$`2007` - df_1962_and_2007$`1962`) %>%
+  arrange(desc(`Change in life expectancy at birth, total (years)`)) %>%
+  select(`Country Name`, `Change in life expectancy at birth, total (years)`)
+
+df_1962_and_2007
 #Maldives
 
 df_LIFE_EXPECTANCY_TOP_10 = df_1962_and_2007 %>%
   slice(1:10)
 
-LIFE_EXPECTANCY_PLOT = ggplot(data = df_LIFE_EXPECTANCY_TOP_10, aes(x = `Country Name` , y = Difference)) + 
+LIFE_EXPECTANCY_PLOT = ggplot(data = df_LIFE_EXPECTANCY_TOP_10, aes(x = `Country Name` , y = `Change in life expectancy at birth, total (years)`)) + 
   geom_bar(stat = 'identity') + rotate_x_text(angle = 90) + 
   ylab("Change in Life expectancy between years 1962 to 2007") + 
   xlab("Top 10 countries") + 
