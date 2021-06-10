@@ -172,7 +172,7 @@ EUROPE_ASIA_AOV %>%
 ```
 Now we can plot something...
 
-```{r}
+```{r warning=FALSE}
 # plot the resultant difference visually
 ggplotly(EUROPE_ASIA_AOV %>% 
   ggplot(data = ., aes(x = continent, y = `Imports of goods and services (% of GDP)`, colour = Year)) +
