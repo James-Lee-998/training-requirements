@@ -6,13 +6,10 @@ library(plotly)
 library(devtools)
 library(maditr)
 library(ggpubr)
+library(rstatix)
 #1. Read in the `gapminder_clean.csv` data as a `tibble` using `read_csv`.
 gapminder_clean <- tibble(read_csv("R for Data Science/gapminder_clean.csv"))
 df = as.data.frame(gapminder_clean)
-gapminder_clean %>%
-  filter(Year == '1962') %>%
-  ggplot(aes(y = `CO2 emissions (metric tons per capita)`, x = gdpPercap)) + 
-  geom_point() + theme_bw()
 
 #2. Filter the data to include only rows where `Year` is `1962` and then make a scatter plot comparing `'CO2 emissions (metric tons per capita)'` and `gdpPercap` for the filtered data.
 df_1962 = gapminder_clean %>%
@@ -20,6 +17,13 @@ df_1962 = gapminder_clean %>%
   summarise(cor = stats::cor.test(`CO2 emissions (metric tons per capita)`,gdpPercap)$estimate,
             pval = stats::cor.test(`CO2 emissions (metric tons per capita)`,gdpPercap)$p.value
   )
+
+#3
+gapminder_clean %>%
+  filter(Year == '1962') %>%
+  ggplot(aes(y = `CO2 emissions (metric tons per capita)`, x = gdpPercap)) + 
+  geom_point() + theme_bw()
+
 #4. On the unfiltered data, answer "In what year is the correlation between `'CO2 emissions (metric tons per capita)'` and `gdpPercap` the strongest?" Filter the dataset to that year for the next step...
 list_of_correlations = gapminder_clean %>%
   group_by(Year) %>%
@@ -42,31 +46,30 @@ ggplotly(plot_1967)
 ################################################################################
 ################################################################################
 #1. What is the relationship between `continent` and `'Energy use (kg of oil equivalent per capita)'`? (stats test needed)
-df_continent = df
 
-model_ENERGY_CONTINENT_aov =  df_continent %>%
+model_ENERGY_CONTINENT_aov =  gapminder_clean %>%
   aov(`Energy use (kg of oil equivalent per capita)`~continent, data = .)
 
 summary(model_ENERGY_CONTINENT_aov) 
 #F = 21.88, p<0.05
 
-shapiro.test(resid(aov(log(`Energy use (kg of oil equivalent per capita)`)~continent, data = df_continent)))
+shapiro.test(resid(aov(log(`Energy use (kg of oil equivalent per capita)`)~continent, data = gapminder_clean)))
 #but residuals are not normally distributed
 
-kruskal.test(`Energy use (kg of oil equivalent per capita)`~continent, data = df_continent)
+kruskal.test(`Energy use (kg of oil equivalent per capita)`~continent, data = gapminder_clean)
 #yes there is a relationship between continent and Energy use
 #x^2 = 339.15, p<0.05
 
-df_continent['continent'][is.na(df_continent['continent'])] = 'Other' # change all NAs for continent to other
+gapminder_clean['continent'][is.na(gapminder_clean['continent'])] = 'Other' # change all NAs for continent to other
 
-df_continent_points = df_continent %>%
+df_continent_points = gapminder_clean %>%
   filter(is.na(`Energy use (kg of oil equivalent per capita)`) == FALSE) %>%
   select(`Country Name`,`Energy use (kg of oil equivalent per capita)`, continent) %>%
   group_by(`Country Name`, continent) %>%
   summarize(value = mean(`Energy use (kg of oil equivalent per capita)`)) %>%
   ungroup()
 
-df_continent_countries = df_continent %>%
+df_continent_countries = gapminder_clean %>%
   filter(is.na(`Energy use (kg of oil equivalent per capita)`) == FALSE) %>%
   select(`Country Name`,`Energy use (kg of oil equivalent per capita)`,continent) %>%
   group_by(continent) %>%
@@ -90,33 +93,28 @@ ggplotly(plot_ENERGY_CONTINENT)
 ################################################################################
 #2. Is there a significant difference between Europe and Asia with respect to `'Imports of goods and services (% of GDP)'` in the years after 1990? (stats test needed) 
 
-ASIA = df %>%
+ASIA = gapminder_clean %>%
   filter(Year > 1990) %>%
-  filter(continent == 'Asia')
+  filter(continent == 'Asia') %>%
+  filter(is.na(`Imports of goods and services (% of GDP)`) == FALSE) %>%
+  select(`Country Name`,`Imports of goods and services (% of GDP)`, continent, Year)
 
-EUROPE = df %>%
+EUROPE = gapminder_clean %>%
   filter(Year > 1990) %>%
-  filter(continent == 'Europe')
+  filter(continent == 'Europe') %>%
+  filter(is.na(`Imports of goods and services (% of GDP)`) == FALSE) %>%
+  select(`Country Name`,`Imports of goods and services (% of GDP)`, continent, Year)
 
-EUROPE_ASIA_AOV = rbind(ASIA,EUROPE)
-
-ks.test(as.numeric(EUROPE_ASIA_AOV$`Imports of goods and services (% of GDP)`), "pnorm")
+ks.test(ASIA$`Imports of goods and services (% of GDP)`, "pnorm")
+ks.test(EUROPE$`Imports of goods and services (% of GDP)`, "pnorm")
 #non-normal distribution of Imports therefore use non-parametric or use log
 #we use a KS test because we want to allow for some tail skewness
 
-EUROPE_ASIA_new_df = as.data.frame(t(rbind(EUROPE_ASIA_AOV$continent, as.numeric(EUROPE_ASIA_AOV$`Imports of goods and services (% of GDP)`))))
+EUROPE_ASIA_AOV = rbind(ASIA,EUROPE)
 
-colnames(EUROPE_ASIA_new_df) = c("Continent", "Imports")
-
-EUROPE_ASIA_DF_FINAL_ASIA = EUROPE_ASIA_new_df %>%
-  filter(is.na(Imports) == FALSE) %>%
-  filter(Continent == 'Asia')
-
-EUROPE_ASIA_DF_FINAL_EUROPE = EUROPE_ASIA_new_df %>%
-  filter(is.na(Imports) == FALSE) %>%
-  filter(Continent == 'Europe')
-
-wilcox.test(as.numeric(EUROPE_ASIA_DF_FINAL_ASIA$Imports), as.numeric(EUROPE_ASIA_DF_FINAL_EUROPE$Imports))
+EUROPE_ASIA_AOV %>%
+  wilcox_test(`Imports of goods and services (% of GDP)`~continent) %>%
+  add_significance()
 
 ggplotly(EUROPE_ASIA_AOV %>%
   ggplot(data = ., aes(x = continent, y = `Imports of goods and services (% of GDP)`, colour = Year)) +
@@ -133,7 +131,7 @@ ggplotly(EUROPE_ASIA_AOV %>%
 N = c()
 HIGHEST = c()
 
-for (i in levels(as.factor(df$Year))) {
+for (i in levels(as.factor(gapminder_clean$Year))) {
   X = df %>%
     select(Year,`Country Name` ,`Population density (people per sq. km of land area)`) %>%
     filter(Year == i) %>%
@@ -144,7 +142,7 @@ for (i in levels(as.factor(df$Year))) {
   N = rbind(N,X)
 }
 
-N$Max = c(rep(HIGHEST, each = 10))
+N$Max = c(rep(HIGHEST$`Country Name`, each = 10))
 
 PLOT_HIGHEST_POP = N %>%
   ggplot(data = ., aes(x = Year, y = `Population density (people per sq. km of land area)`, fill = `Country Name`, label = Max)) +
@@ -156,27 +154,21 @@ ggplotly(PLOT_HIGHEST_POP)
 ####################################################################
 #4. What country (or countries) has shown the greatest increase in `'Life expectancy at birth, total (years)'` since 1962?
 
-df_1962 = as.data.frame(df %>%
-  filter(Year == 1962))
-
-df_2007 = as.data.frame(df %>%
-  filter(Year == 2007))
-          
-df_LIFE_EXPECTANCY = as.data.frame(cbind(df_1962$`Country Name`, df_1962$`Life expectancy at birth, total (years)`, df_2007$`Life expectancy at birth, total (years)`))
-colnames(df_LIFE_EXPECTANCY) = c('Country','1962','2007')
-
-df_LIFE_EXPECTANCY = df_LIFE_EXPECTANCY %>%
-  na.omit()
-
-df_LIFE_EXPECTANCY['Difference'] = (as.numeric(df_LIFE_EXPECTANCY$`2007`) - as.numeric(df_LIFE_EXPECTANCY$`1962`))
-df_LIFE_EXPECTANCY$Country[which.max(df_LIFE_EXPECTANCY$Difference)]
-#Sierra Leone
-
-df_LIFE_EXPECTANCY_TOP_10 = df_LIFE_EXPECTANCY %>%
+df_1962_and_2007 = gapminder_clean %>%
+  filter(Year %in% c('2007', '1962')) %>%
+  select(`Country Name`, Year, `Life expectancy at birth, total (years)`) %>%
+  na.omit() %>%
+  spread(Year,`Life expectancy at birth, total (years)`) %>%
+  mutate(Difference = df_1962_and_2007$`2007` - df_1962_and_2007$`1962`) %>%
   arrange(desc(Difference)) %>%
+  select(`Country Name`, Difference)
+
+#Maldives
+
+df_LIFE_EXPECTANCY_TOP_10 = df_1962_and_2007 %>%
   slice(1:10)
 
-LIFE_EXPECTANCY_PLOT = ggplot(data = df_LIFE_EXPECTANCY_TOP_10, aes(x = Country, y = Difference)) + 
+LIFE_EXPECTANCY_PLOT = ggplot(data = df_LIFE_EXPECTANCY_TOP_10, aes(x = `Country Name` , y = Difference)) + 
   geom_bar(stat = 'identity') + rotate_x_text(angle = 90) + 
   ylab("Change in Life expectancy between years 1962 to 2007") + 
   xlab("Top 10 countries") + 
@@ -186,8 +178,8 @@ ggplotly(LIFE_EXPECTANCY_PLOT)
 
 df_all_years_TOP_10 = c()
 
-for (i in df_LIFE_EXPECTANCY_TOP_10$Country) {
-  X = df %>%
+for (i in df_LIFE_EXPECTANCY_TOP_10$`Country Name`) {
+  X = gapminder_clean %>%
     filter(`Country Name` == i) %>%
     select(`Country Name`,Year, `Life expectancy at birth, total (years)`)
   df_all_years_TOP_10 = rbind(df_all_years_TOP_10,X)
