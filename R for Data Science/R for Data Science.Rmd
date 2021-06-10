@@ -2,7 +2,7 @@
 title: "R for Data Science"
 author: "James Lee"
 date: "10/06/2021"
-output: html_document
+output: github_document
 ---
 
 Our aim is to understand the changes countries see over the course of 15 years (1962-2007). This relates to variables such as their GDP, average life expectancy, Imports and Exports and energy use. Assessing relationships between these variables allow us to probe for more substantial information or trends in changing global environment.
