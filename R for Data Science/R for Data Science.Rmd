@@ -102,7 +102,7 @@ Our analysis of variance detects some significance however the analysis gives us
 
 Following a Kruskal-Wallis chi-squared test we can safely say that there is some difference in Energy use depending between continents. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 gapminder_clean['continent'][is.na(gapminder_clean['continent'])] = 'Other' # change all NAs for continent to other
 
 # filter NAs and select Country, Energy use and continent as columns to obtain means of continents
