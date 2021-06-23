@@ -1,3 +1,6 @@
+suppressMessages(library(dplyr))
+
+
 if (interactive()) {
   con <- stdin()
 } else {
@@ -78,6 +81,10 @@ mat = matrix(mat.data, nrow = 3, ncol = 3)
 
 i = 1
 
+LIST_OF_POTENTIAL_MOVES = c('1,1','1,2','1,3','2,1','2,2','2,3','3,1', '3,2','3,3')
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
+
 while (WIN == FALSE && LOSE == FALSE) {
   if (FIRST == TRUE) { 
     cat("\n")
@@ -102,104 +109,83 @@ while (WIN == FALSE && LOSE == FALSE) {
     cat("Your move:")
     cat("\n")
     cat("Row:")
-    rowwy = as.numeric(readLines(con = con, n = 1))
+    rowwy = readLines(con = con, n = 1) # asd
     cat("Column:")
-    collumny = as.numeric(readLines(con = con, n = 1))
+    collumny = readLines(con = con, n = 1) # df
+    
+    
+    while (rowwy %!in% seq(1:3) || collumny %!in% seq(1:3)) {
+      
+      cat("Ummmm.... right.... ")
+      cat("\n")
+      Sys.sleep(5)
+      cat("\n")
+      cat("Ummmm.. Try again?")
+      cat("Redo your move:")
+      cat("\n")
+      cat("Row:")
+      rowwy = readLines(con = con, n = 1)
+      cat("Column:")
+      collumny = readLines(con = con, n = 1)
+      
+      move = paste(rowwy,collumny, sep = ",")
+      
+      if (is.numeric(rowwy) == FALSE && is.numeric(collumny) == FALSE) {
+        break
+      }
+      
+    }
     cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-    check  = readLines(con = con, n = 1)
-    if ((rowwy < 0) == TRUE || (collumny <0) == TRUE || (rowwy > 3) == TRUE || (collumny > 3) == TRUE|| is.numeric(rowwy) == FALSE || is.numeric(collumny) == FALSE) {
-      while ((rowwy < 0) == TRUE || (collumny <0) == TRUE || (rowwy > 3) == TRUE || (collumny > 3) == TRUE|| is.numeric(rowwy) == FALSE || is.numeric(collumny) == FALSE) {
-        cat("Invalid move")
+    check  = readLines(con = con, n = 1) 
+    move = paste(rowwy,collumny, sep = ",")
+    while ((move %!in% LIST_OF_POTENTIAL_MOVES) && (check != 'Y' || check != 'y')) {
+      if (rowwy %!in% seq(1:3) || collumny %!in% seq(1:3)) {
+        
+        cat("Move is out of range...") 
         cat("\n")
-        cat("Your move:")
+        cat("Redo your move:")
         cat("\n")
         cat("Row:")
-        rowwy = as.numeric(readLines(con = con, n = 1))
+        rowwy = readLines(con = con, n = 1)
         cat("Column:")
-        collumny = as.numeric(readLines(con = con, n = 1))
+        collumny = readLines(con = con, n = 1)
         cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
         check  = readLines(con = con, n = 1) 
-        if ((check == 'N') == TRUE || (check = 'n') == TRUE) {
-          cat("Redo move")
+        move = paste(rowwy,collumny, sep = ",")
+        
+      } else {
+        
+        if (check != 'Y' || check != 'y') {
+          
+          cat("I will let you try again...")
           cat("\n")
           cat("Your move:")
           cat("\n")
           cat("Row:")
-          rowwy = as.numeric(readLines(con = con, n = 1))
+          rowwy = readLines(con = con, n = 1)
           cat("Column:")
-          collumny = as.numeric(readLines(con = con, n = 1))
+          collumny = readLines(con = con, n = 1)
           cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
           check  = readLines(con = con, n = 1) 
-        } else {  
-            if (rowwy <0 && collumny <0 && rowwy>3 && collumny>3 && is.numeric(rowwy) == TRUE && is.numeric(collumny) == TRUE && ((check == 'y') == TRUE || (check = 'Y') == TRUE)) {
-            break
-            }
+          move = paste(rowwy,collumny, sep = ",")
         }
+      }    
+      
+      if (move %in% LIST_OF_POTENTIAL_MOVES && (check == 'Y' || check == 'y')) {
+        move = paste(rowwy,collumny, sep = ",")
+        break
+        
       }
     }
-    P = mat[rowwy,collumny]
-    while (is.na(P) == FALSE) {
-      cat("Invalid move: move has already been placed in that position")
-      cat("\n")
-      cat("Your move:")
-      cat("\n")
-      cat("Row:")
-      rowwy = as.numeric(readLines(con = con, n = 1))
-      cat("Column:")
-      collumny = as.numeric(readLines(con = con, n = 1))
-      cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-      check  = readLines(con = con, n = 1) 
-      P = mat[rowwy,collumny]
-      if ((check == 'Y'||check == 'y') == TRUE) {
-        if (is.na(P) == TRUE) {
-          break
-        }
-      }
-    } 
-    if ((check == 'N'|| check == 'n') == TRUE) {
-      while (is.na(P) == FALSE) {
-        cat("Invalid move: move has already been placed in that position")
-        cat("\n")
-        cat("Your move:")
-        cat("\n")
-        cat("Row:")
-        rowwy = as.numeric(readLines(con = con, n = 1))
-        cat("Column:")
-        collumny = as.numeric(readLines(con = con, n = 1))
-        cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-        check  = readLines(con = con, n = 1) 
-        P = mat[rowwy,collumny]
-        if ((check == 'Y'|| check == 'y') == TRUE) {
-          if (is.na(P) == TRUE) {
-            break
-          }
-        }
-      }
-        if ((check == 'N'|| check == 'n') == TRUE) {
-          cat("Redo your move:")
-          cat("\n")
-          cat("Row:")
-          rowwy = as.numeric(readLines(con = con, n = 1))
-          cat("Column:")
-          collumny = as.numeric(readLines(con = con, n = 1))
-          cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-          check  = readLines(con = con, n = 1)
-          P = mat[rowwy,collumny]
-          if ((is.na(P) == TRUE) && (check == 'Y' || check == 'y') == TRUE) {
-            break
-          }
-        } else {
-            break
-        }
-      }
-    mat[rowwy,collumny] = 'X'
-    list_of_potential_moves = which(is.na(mat), arr.ind = TRUE)
-    Computer_move = list_of_potential_moves[1,]
-    R = Computer_move[1]
-    C = Computer_move[2]
+    mat[as.numeric(rowwy),as.numeric(collumny)] = 'X'
+    LIST_OF_POTENTIAL_MOVES = LIST_OF_POTENTIAL_MOVES[LIST_OF_POTENTIAL_MOVES != move]
+    list_of_potential_moves = data.frame(which(is.na(mat), arr.ind = TRUE))
+    Computer_move = sample_n(list_of_potential_moves, 1)
+    R = as.numeric(Computer_move[1])
+    C = as.numeric(Computer_move[2])
     mat[R,C] = 'O'
-    X_WIN = win_checker_X(mat)
-    O_WIN = win_checker_O(mat)
+    Computer_move = sprintf("%d,%d", R,C)
+    LIST_OF_POTENTIAL_MOVES = LIST_OF_POTENTIAL_MOVES[LIST_OF_POTENTIAL_MOVES != Computer_move]
     cat("\n")
     cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     cat("\n")
@@ -210,6 +196,8 @@ while (WIN == FALSE && LOSE == FALSE) {
     cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     cat("\n")
     Sys.sleep(0.5)
+    X_WIN = win_checker_X(mat)
+    O_WIN = win_checker_O(mat)
     if ((X_WIN == TRUE) || (O_WIN == TRUE)) {
       if ((X_WIN == TRUE)) {
         cat("\n")
@@ -218,182 +206,162 @@ while (WIN == FALSE && LOSE == FALSE) {
         WIN = TRUE
         break
       } else {
-          cat("\n")
-          cat("COMPUTER WIN BOI!!!")
-          cat("\n")
-          LOSE = TRUE
-          break
-      }
-    } else {  
-        cat("\n")
-        cat("END OF ROUND#", as.character(i))
-        cat("\n")
-        i = i + 1
-        Sys.sleep(2)
-    }
-  } else {
-      list_of_potential_moves = which(is.na(mat), arr.ind = TRUE)
-      Computer_move = list_of_potential_moves[1,]
-      R = Computer_move[1]
-      C = Computer_move[2]
-      mat[R,C] = 'X'
-      X_WIN = win_checker_X(mat)
-      cat("\n")
-      cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      cat("\n")
-      
-      print(mat)
-      
-      cat("\n")
-      cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      cat("\n")
-      Sys.sleep(0.5)
-      if ((X_WIN == TRUE)) {
         cat("\n")
         cat("COMPUTER WIN BOI!!!")
         cat("\n")
         LOSE = TRUE
         break
       }
-      cat("\n")
-      cat("############################################################")
-      cat("\n")
-      cat("\t \t \t ROUND#", as.character(i), " START")
-      cat("\n")
-      cat("############################################################")
-      cat("\n")
-      cat("\n")
-      cat("\t \t \t Current Board:")
-      cat("\n")
-      cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      cat("\n")
-    
-      print(mat)
-    
-      cat("\n")
-      cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      cat("\n")
-      cat("\n")
-      cat("Your move:")
-      cat("\n")
-      cat("Row:")
-      rowwy = as.numeric(readLines(con = con, n = 1))
-      cat("Column:")
-      collumny = as.numeric(readLines(con = con, n = 1))
-      cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-      check  = readLines(con = con, n = 1)
-      if ((rowwy < 0) == TRUE || (collumny <0) == TRUE || (rowwy > 3) == TRUE || (collumny > 3) == TRUE|| is.numeric(rowwy) == FALSE || is.numeric(collumny) == FALSE) {
-        while ((rowwy < 0) == TRUE || (collumny <0) == TRUE || (rowwy > 3) == TRUE || (collumny > 3) == TRUE|| is.numeric(rowwy) == FALSE || is.numeric(collumny) == FALSE) {
-          cat("Invalid move")
-          cat("\n")
-          cat("Your move:")
-          cat("\n")
-          cat("Row:")
-          rowwy = as.numeric(readLines(con = con, n = 1))
-          cat("Column:")
-          collumny = as.numeric(readLines(con = con, n = 1))
-          cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-          check  = readLines(con = con, n = 1) 
-          if ((check == 'N') == TRUE || (check = 'n') == TRUE) {
-            cat("Redo move")
-            cat("\n")
-            cat("Your move:")
-            cat("\n")
-            cat("Row:")
-            rowwy = as.numeric(readLines(con = con, n = 1))
-            cat("Column:")
-            collumny = as.numeric(readLines(con = con, n = 1))
-            cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-            check  = readLines(con = con, n = 1) 
-          } else {  
-            if (rowwy <0 && collumny <0 && rowwy>3 && collumny>3 && is.numeric(rowwy) == TRUE && is.numeric(collumny) == TRUE && ((check == 'y') == TRUE || (check = 'Y') == TRUE)) {
-              break
-            }
-          }
-        }
-      }
-      P = mat[rowwy,collumny]
-      while (is.na(P) == FALSE) {
-        cat("Invalid move: move has already been placed in that position")
-        cat("\n")
-        cat("Your move:")
-        cat("\n")
-        cat("Row:")
-        rowwy = as.numeric(readLines(con = con, n = 1))
-        cat("Column:")
-        collumny = as.numeric(readLines(con = con, n = 1))
-        cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-        check  = readLines(con = con, n = 1) 
-        P = mat[rowwy,collumny]
-        if ((check == 'Y'||check == 'y') == TRUE) {
-          if (is.na(P) == TRUE) {
-            break
-          }
-        }
-      } 
-      while ((check == 'N'|| check == 'n') == TRUE) {
-        while (is.na(P) == FALSE) {
-          cat("Invalid move: move has already been placed in that position")
-          cat("\n")
-          cat("Your move:")
-          cat("\n")
-          cat("Row:")
-          rowwy = as.numeric(readLines(con = con, n = 1))
-          cat("Column:")
-          collumny = as.numeric(readLines(con = con, n = 1))
-          cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-          check  = readLines(con = con, n = 1) 
-          P = mat[rowwy,collumny]
-          if ((check == 'Y'|| check == 'y') == TRUE) {
-            if (is.na(P) == TRUE) {
-              break
-            }
-          }
-        }
-        if ((check == 'N'|| check == 'n') == TRUE) {
-          cat("Redo your move:")
-          cat("\n")
-          cat("Row:")
-          rowwy = as.numeric(readLines(con = con, n = 1))
-          cat("Column:")
-          collumny = as.numeric(readLines(con = con, n = 1))
-          cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
-          check  = readLines(con = con, n = 1)
-          P = mat[rowwy,collumny]
-          if ((is.na(P) == TRUE) && (check == 'Y' || check == 'y') == TRUE) {
-            break
-          }
-        } else {
-            break
-        }
-      }
-      mat[rowwy,collumny] = 'O'
-      O_WIN = win_checker_O(mat)
-      cat("\n")
-      cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      cat("\n")
-      
-      print(mat)
-      
-      cat("\n")
-      cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-      cat("\n")
-      Sys.sleep(0.5)
-      if ((O_WIN == TRUE)) {
-        cat("\n")
-        cat("YOU WIN BOI!!!")
-        cat("\n")
-        WIN = TRUE
-        break
-      }
+    } else {  
       cat("\n")
       cat("END OF ROUND#", as.character(i))
       cat("\n")
       i = i + 1
       Sys.sleep(2)
     }
+  } else {
+    list_of_potential_moves = data.frame(which(is.na(mat), arr.ind = TRUE))
+    Computer_move = sample_n(list_of_potential_moves, 1)
+    R = as.numeric(Computer_move[1])
+    C = as.numeric(Computer_move[2])
+    mat[R,C] = 'X'
+    Computer_move = sprintf("%d,%d", R,C)
+    LIST_OF_POTENTIAL_MOVES = LIST_OF_POTENTIAL_MOVES[LIST_OF_POTENTIAL_MOVES != Computer_move]
+    cat("\n")
+    cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    cat("\n")
+    
+    print(mat)
+    
+    cat("\n")
+    cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    cat("\n")
+    X_WIN = win_checker_X(mat)
+    Sys.sleep(0.5)
+    if ((X_WIN == TRUE)) {
+      cat("\n")
+      cat("COMPUTER WIN BOI!!!")
+      cat("\n")
+      LOSE = TRUE
+      break
+    }
+    cat("\n")
+    cat("############################################################")
+    cat("\n")
+    cat("\t \t \t ROUND#", as.character(i), " START")
+    cat("\n")
+    cat("############################################################")
+    cat("\n")
+    cat("\n")
+    cat("\t \t \t Current Board:")
+    cat("\n")
+    cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    cat("\n")
+    
+    print(mat)
+    
+    cat("\n")
+    cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    cat("\n")
+    cat("\n")
+    cat("Your move:")
+    cat("\n")
+    cat("Row:")
+    rowwy = readLines(con = con, n = 1)
+    cat("Column:")
+    collumny = readLines(con = con, n = 1)
+    
+    while (rowwy %!in% seq(1:3) || collumny %!in% seq(1:3)) {
+      
+      cat("Ummmm.... right.... ")
+      cat("\n")
+      Sys.sleep(5)
+      cat("\n")
+      cat("Ummmm.. Try again?")
+      cat("Redo your move:")
+      cat("\n")
+      cat("Row:")
+      rowwy = readLines(con = con, n = 1)
+      cat("Column:")
+      collumny = readLines(con = con, n = 1)
+      move = paste(rowwy,collumny, sep = ",")
+      
+      if (is.numeric(rowwy) == FALSE && is.numeric(collumny) == FALSE) {
+        break
+      }
+      
+    }
+    cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
+    check  = readLines(con = con, n = 1) 
+    move = paste(rowwy,collumny, sep = ",")
+    
+    while (move %!in% LIST_OF_POTENTIAL_MOVES && (check != 'Y' || check != 'y')) {
+      if (rowwy %!in% seq(1:3) || collumny %!in% seq(1:3)) {
+        
+        cat("Move is out of range...") 
+        cat("\n")
+        cat("Redo your move:")
+        cat("\n")
+        cat("Row:")
+        rowwy = readLines(con = con, n = 1)
+        cat("Column:")
+        collumny = readLines(con = con, n = 1)
+        cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
+        check  = readLines(con = con, n = 1) 
+        move = paste(rowwy,collumny, sep = ",")
+        
+      } else {
+        
+        if (check != 'Y' || check != 'y') {
+          
+          cat("I will let you try again...")
+          cat("\n")
+          cat("Your move:")
+          cat("\n")
+          cat("Row:")
+          rowwy = readLines(con = con, n = 1)
+          cat("Column:")
+          collumny = readLines(con = con, n = 1)
+          cat("So your move is:", as.character(rowwy), ",", as.character(collumny), "? [y/n]")
+          check  = readLines(con = con, n = 1) 
+          move = paste(rowwy,collumny, sep = ",")
+        }
+      }    
+      
+      if (move %in% LIST_OF_POTENTIAL_MOVES && (check == 'Y' || check == 'y')) {
+        move = paste(rowwy,collumny, sep = ",")
+        break
+        
+      }
+    } 
+    mat[as.numeric(rowwy),as.numeric(collumny)] = 'O'
+    LIST_OF_POTENTIAL_MOVES = LIST_OF_POTENTIAL_MOVES[LIST_OF_POTENTIAL_MOVES != move]
+    cat("\n")
+    cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    cat("\n")
+    
+    print(mat)
+    
+    cat("\n")
+    cat("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    cat("\n")
+    O_WIN = win_checker_O(mat)
+    Sys.sleep(0.5)
+    if ((O_WIN == TRUE)) {
+      cat("\n")
+      cat("YOU WIN BOI!!!")
+      cat("\n")
+      WIN = TRUE
+      break
+    }
+    cat("\n")
+    cat("END OF ROUND#", as.character(i))
+    cat("\n")
+    i = i + 1
+    Sys.sleep(2)
+  }
 }
-  
+
 
 if (WIN == TRUE) {
   cat("Player wins")
