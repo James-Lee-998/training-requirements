@@ -1,6 +1,6 @@
 # Single-Cell RNA-Seq Analysis
 
-Suggested pre-requisites: [R Programming](https://github.com/Bioinformatics-Research-Network/training-requirements/tree/main/R%20Programming), [R for Data Science](https://github.com/Bioinformatics-Research-Network/training-requirements/tree/main/R%20for%20Data%20Science), and [RNA-Seq Analysis](https://github.com/Bioinformatics-Research-Network/training-requirements/tree/main/RNA-Seq%20Analysis)
+Pre-requisites: [R Programming](https://github.com/Bioinformatics-Research-Network/training-requirements/tree/main/R%20Programming), [R for Data Science](https://github.com/Bioinformatics-Research-Network/training-requirements/tree/main/R%20for%20Data%20Science), and [RNA-Seq Analysis](https://github.com/Bioinformatics-Research-Network/training-requirements/tree/main/RNA-Seq%20Analysis)
 
 The purpose of this challenge is to complete a full scRNA-Seq analysis, including interpreting the results in a biological context. You should pretend that you are making a report that you want to show to a biomedical collaborator who does not know any bioinformatics. You should have an introduction in which you outline the research question, a results section in which you present your results, and a discussion section in which you interpret the results. It should be written in `RMarkdown` and formatted in an aesthetic way that is easy to follow. Here is an example of an aesthetic, easy-to-follow RMarkdown notebook: [here](https://static-html-pages.s3-us-west-2.amazonaws.com/merck-project/RloopCorrelationSummary.html).
 
@@ -39,6 +39,19 @@ Any work which you perform in addition to the above is up to you -- the only req
 ### Discuss the results
 
 Finally, write a brief discussion of the results of your analysis. You should reference your specific findings and discuss how they address your original biological questions. You should emphasize how your analysis results address knowledge gaps and also describe any gaps which remain along with future research directions to pursue in address them.
+
+
+### Additional requirements
+
+For a passing evaluation, the code and HTML from this analysis should conform to the following standards:
+
+1. When possible, the analysis should be "self-reporting" (i.e., results should not be hardcoded into the markdown.) You can accomplish this with inline code chunks -- learn more [here](https://rmarkdown.rstudio.com/lesson-4.html).
+2. Code style counts. Make sure to style your notebook using [styler](https://www.tidyverse.org/blog/2017/12/styler-1.0.0/) before submitting it!
+3. The HTML rendered from the notebook should be user-friendly and well-styled as well.
+    - Consider using a [theme](https://bookdown.org/yihui/rmarkdown/html-document.html#appearance-and-style) for your notebook, along with a [table of contents](https://bookdown.org/yihui/rmarkdown/html-document.html#table-of-contents)
+    - Optimize your plots for readability -- [tutorial](https://cedricscherer.netlify.app/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/)
+    - Refrain from showing raw text output to the reader as this is unfriendly for non-computational readers. Especially, for tables, consider using [kableExtra](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html) or [DT](https://rstudio.github.io/DT/).
+
 
 ## Resources and advice
 
