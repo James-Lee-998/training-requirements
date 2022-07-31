@@ -44,10 +44,18 @@ class board(object):
                                                            [False, False, False],
                                                            [False, False, False]]))
 
+    def get_board_empty_coordinates(self):
+        list_of_coordinates = []
+        for index, row in self.board.iterrows():
+            for count, i in enumerate(row):
+                if i == '.':
+                    list_of_coordinates.append((index, count))
+        return list_of_coordinates
+
 
 if __name__ == '__main__':
     x = board()
-    x.board = pd.DataFrame([['x','x','x'],
-                            ['x','x','x'],
+    x.board = pd.DataFrame([['.','.','.'],
+                            ['x','.','x'],
                             ['x','x','x']])
-    print(x.determine_if_board_is_full())
+    print(x.get_board_empty_coordinates())
