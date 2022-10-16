@@ -14,14 +14,14 @@ To complete the miniproject, create an analysis in `jupyter-notebook` which does
 4. On the unfiltered data, answer "In what year is the correlation between `'CO2 emissions (metric tons per capita)'` and `gdpPercap` the strongest?" Filter the dataset to that year for the next step...
 5. Using `plotly` or `bokeh`, create an interactive scatter plot comparing `'CO2 emissions (metric tons per capita)'` and `gdpPercap`, where the point size is determined by `pop` (population) and the color is determined by the `continent`. 
 
-Now, without further guidance, use your Python Data Science skills (and the correct statistical tests) to answer the following:
+Now, without further guidance, use your Python Data Science skills (and the correct statistical tests) to answer the following (*use the unfiltered dataset*):
 
 1. What is the relationship between `continent` and `'Energy use (kg of oil equivalent per capita)'`? (Stats test needed)
 2. Is there a significant difference between Europe and Asia with respect to `'Imports of goods and services (% of GDP)'` in the years after 1990? (Stats test needed)
 3. What is the country (or countries) that has the highest `'Population density (people per sq. km of land area)'` across all years? (i.e., which country has the highest average ranking in this category across each time point in the dataset?)
 4. What country (or countries) has shown the greatest increase in `'Life expectancy at birth, total (years)'` since 1962? 
 
-For each question, you should generate summary visualizations (preferrably interactive ones) that demonstrate your answer to each question. Additionally, the analysis must be user-friendly for a non-programmer and should intuitively convey the insights you uncovered. Use `markdown` to ensure that the text is organized and readable. 
+For each question, you should generate summary visualizations (preferrably interactive ones) that demonstrate your answer to each question. Additionally, the analysis must be user-friendly for a non-programmer and should intuitively convey the insights you uncovered. Use `markdown` to ensure that the text is organized and readable. Finally, the notbook should describe your reasoning for the statistical tests you chose to use.
 
 Once you are done, push the notebook to GitHub, generate an `nbviewer` link [here](https://nbviewer.jupyter.org/) and share it with Henry.
 
